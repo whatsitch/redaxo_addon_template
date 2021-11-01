@@ -1,0 +1,2 @@
+# redaxo-addon-template
+ 
