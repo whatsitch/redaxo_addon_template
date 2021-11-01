@@ -1,2 +1,3 @@
-# redaxo-addon-template
- 
+# Redaxo Addon Template
+
+## Overview

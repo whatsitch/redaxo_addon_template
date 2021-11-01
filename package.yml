@@ -1,0 +1,10 @@
+package: redaxo-addon-template
+version: "1.0.0"
+author: whatsitch
+supportpage: https://github.com/whatsitch/redaxo-addon-template/
+
+page:
+  title: "Page Title"
+  icon: rex-icon fa-desktop
+  perm: admin
+block: demo_addon
