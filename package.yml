@@ -4,7 +4,24 @@ author: whatsitch
 supportpage: https://github.com/whatsitch/redaxo-addon-template/
 
 page:
-  title: "Page Title"
+  title: "Redaxo Addon Template" # navigation title
   icon: rex-icon fa-desktop
   perm: admin
-block: demo_addon
+
+  block: block
+
+  subpages:
+    overview:
+      title: "translate:Overview"
+      icon: rex-icon fa-home
+      perm: admin
+      subpages:
+        readme: { title: "README", subPath: "README.md" }
+        changelog: { title: "changelog", subPath: "CHANGELOG.md" } #
+    config:
+      title: "translate:Config"
+      icon: rex-icon fa-wrench
+
+installer_ignore:
+  - node_modules
+  - .env
