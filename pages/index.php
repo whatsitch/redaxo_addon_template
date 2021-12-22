@@ -7,6 +7,6 @@ $subPages = rex_be_controller::getCurrentPagePart();
 
 
 var_dump($subPages);
-
+var_dump(Addon::getPackageName());
 
 rex_be_controller::includeCurrentPageSubPath();

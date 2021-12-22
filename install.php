@@ -1,3 +1,5 @@
 <?php
+$addon = Addon::getInstance();
 
-$addon = rex_addon::get('redaxo-addon-template');
+/*----- create defined tables -----*/
+$addon->db->up();

@@ -3,13 +3,15 @@
 class Addon
 {
     private static $instance = null;
-    private $package_name = "redaxo-addon-template";
-    public $name = "Redaxo Addon Template";
-    public $rex_addon;
+    private static string  $package_name = "redaxo_addon_template";
+    public string $name = "Redaxo Addon Template";
+    public Database $db;
+    public rex_addon $rex_addon;
 
-    public function __construct()
+    private function __construct()
     {
-        $this->rex_addon = rex_addon::get($this->package_name);
+        $this->rex_addon = rex_addon::get(self::$package_name);
+        $this->db = Database::getInstance();
     }
 
     public static function getInstance()
@@ -19,5 +21,9 @@ class Addon
         }
 
         return self::$instance;
+    }
+    public static function getPackageName()
+    {
+        return self::$package_name;
     }
 }
