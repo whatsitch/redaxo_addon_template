@@ -12,6 +12,9 @@ class Addon
     {
         $this->rex_addon = rex_addon::get(self::$package_name);
         $this->db = Database::getInstance();
+
+        /*----- populate db with sample data -----*/
+        $this->db->enableSeeder(true);
     }
 
     public static function getInstance(): ?Addon
@@ -19,9 +22,9 @@ class Addon
         if (self::$instance == null) {
             self::$instance = new Addon();
         }
-
         return self::$instance;
     }
+
     public static function getPackageName(): string
     {
         return self::$package_name;

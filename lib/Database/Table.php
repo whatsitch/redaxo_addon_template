@@ -1,12 +1,13 @@
 <?php
 
+use JetBrains\PhpStorm\Pure;
+
 class Table
 {
     public string $name;
     public array $columns;
-    private bool $enableAddonPrefix;
 
-    public function __construct(string $tableName, bool $enableAddonPrefix, array $columns)
+    #[Pure] public function __construct(string $tableName, bool $enableAddonPrefix, array $columns)
     {
         if ($enableAddonPrefix) {
 
@@ -15,12 +16,5 @@ class Table
             $this->name = $tableName;
         }
         $this->columns = $columns;
-        $this->enableAddonPrefix = $enableAddonPrefix;
-    }
-
-    public function addColumn(string $name)
-    {
-
-        array_push($this->columns, new rex_sql_column($name, "tinyint(1)", true, 1));
     }
 }

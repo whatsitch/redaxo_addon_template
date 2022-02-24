@@ -1,13 +1,5 @@
 <?php
 
-enum ActionType: string
-{
-    case TOGGLESTATUS = "togglestatus";
-    case ADD = "add";
-    case EDIT = "edit";
-    case DELETE = "delete";
-}
-
 class TableManager
 {
     private string $table;
@@ -58,7 +50,7 @@ class TableManager
 
     public function setList()
     {
-        $this->list = rex_list::Factory($this->sqlSelect, $this->rowsPerPage, $this->listName, true);
+        $this->list = rex_list::Factory($this->sqlSelect, $this->rowsPerPage, $this->listName, false);
     }
 
     public function setStartPosition()
@@ -67,9 +59,8 @@ class TableManager
         if ($this->startPosition == -1) {
             $this->startPosition = rex_request($this->listName . '_start', 'int', 0);
         }
-        $this->addon->rex_addon->setProperty('list_start', $this->startPosition);
+       // $this->addon->rex_addon->setProperty('list_start', $this->startPosition);
 
-        var_dump($this->startPosition);
 
     }
 
@@ -78,7 +69,6 @@ class TableManager
         $this->setAction();
         $this->setEntityId();
         $this->setOldStatus();
-
     }
 
     public function getAction(): string
@@ -104,11 +94,11 @@ class TableManager
     public function addActionColumn()
     {
         $this->list->addColumn('func', '', -1, ['<th>'. ListManager::$valuePlaceholder . '</th>', '<td nowrap="nowrap">'. ListManager::$valuePlaceholder . '</td >']);
-        $addon = $this->addon;
-        $this->list->setColumnFormat('func', 'custom', static function ($params) use ($addon) {
-            $start = $addon->rex_addon->getProperty('list_start');
+
+        $this->list->setColumnFormat('func', 'custom', function ($params)  {
+           // $start = $addon->rex_addon->getProperty('list_start');
             $list = $params['list'];
-            $list->setColumnParams('delete', ['func' => ActionType::DELETE->value, 'id' => ListManager::$idPlaceholder, 'start' => $start]);
+            $list->setColumnParams('delete', ['func' => ActionType::DELETE->value, 'id' => ListManager::$idPlaceholder, 'start' => $this->startPosition]);
             $list->addLinkAttribute('delete', 'data-confirm', '[###name### ###description###] - confirm');
             return $list->getColumnLink('delete', ListManager::$rexIconDelete . 'delete');
         });

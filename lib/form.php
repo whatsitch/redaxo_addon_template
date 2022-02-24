@@ -3,8 +3,8 @@
 class form extends rex_form
 {
     /**
-     * Callbackfunktion vor dem speichern des Formulars
-     * hier kann der zu speichernde Inhalt noch beeinflusst werden.
+     * callback function before form save
+     * validate form
      */
     public function preSave($fieldsetName, $fieldName, $fieldValue, rex_sql $saveSql): int|string|null
     {

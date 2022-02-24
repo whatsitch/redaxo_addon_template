@@ -3,7 +3,7 @@
 class Database
 {
     private static ?Database $instance = null;
-    private bool $isSeederEnabled = true;
+    private bool $isSeederEnabled = false;
     protected array $tables;
     private bool $enableAddonPrefix = true;
 
@@ -41,9 +41,6 @@ class Database
             new rex_sql_column("description", "varchar(255)", true, 1),
             new rex_sql_column("isActive", "tinyint(1)", true, 1)
         ]);
-        $this->tables[1] = new Table("test-oop-2", $this->enableAddonPrefix, [
-            new rex_sql_column("isTrue", "tinyint(1)", true, 1)
-        ]);
     }
 
 
@@ -66,7 +63,7 @@ class Database
         }
     }
 
-    public static function getInstance()
+    public static function getInstance(): ?Database
     {
         if (self::$instance == null) {
             self::$instance = new Database();

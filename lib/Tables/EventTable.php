@@ -1,22 +1,21 @@
 <?php
-
 use JetBrains\PhpStorm\NoReturn;
+
+
 
 class EventTable extends TableManager
 {
 
     public function modifyIsActiveColumn()
     {
-        $addon = $this->addon;
-        $this->list->setColumnFormat('isActive', 'custom', static function ($params) use ($addon) {
-            $start = $addon->rex_addon->getProperty('list_start');
+        $this->list->setColumnFormat('isActive', 'custom', function ($params) {
             $list = $params['list'];
             $list->addLinkAttribute('status', 'class', 'toggle');
             if ($list->getValue('isActive') == 1) {
-                $list->setColumnParams('isActive', ['func' => ActionType::TOGGLESTATUS->value, 'id' => ListManager::$idPlaceholder, 'oldstatus' => ListManager::$isActivePlaceholder, 'start' => $start]);
+                $list->setColumnParams('isActive', ['func' => ActionType::TOGGLESTATUS->value, 'id' => ListManager::$idPlaceholder, 'oldstatus' => ListManager::$isActivePlaceholder, 'start' => $this->startPosition]);
                 $string = $list->getColumnLink('isActive', '<span class="rex-online">' . ListManager::rexIconActive(true) . "active" . '</span>');
             } else {
-                $list->setColumnParams('isActive', ['func' => ActionType::TOGGLESTATUS->value, 'id' => ListManager::$idPlaceholder, 'oldstatus' => ListManager::$isActivePlaceholder, 'start' => $start]);
+                $list->setColumnParams('isActive', ['func' => ActionType::TOGGLESTATUS->value, 'id' => ListManager::$idPlaceholder, 'oldstatus' => ListManager::$isActivePlaceholder, 'start' => $this->startPosition]);
                 $string = $list->getColumnLink('isActive', '<span class="rex-offline">' . ListManager::rexIconActive(false)  . "inactive" . '</span>');
             }
             return $string;
