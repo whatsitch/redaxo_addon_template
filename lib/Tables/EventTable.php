@@ -52,10 +52,12 @@ class EventTable extends TableManager
 
     private function setForm(string $title)
     {
-        $form = form::factory($this->getTable(), "Datensatz", 'id=' . rex_request('id', 'int', 0), 'post', false);
+        $form = form::factory($this->getTable(), "Dataset", 'id=' . rex_request('id', 'int', 0), 'post', false);
 
         $form->addParam('id', $this->entityId);
 
+        $form->addParam('sort', rex_request('sort', 'string', ''));
+        $form->addParam('sorttype', rex_request('sorttype', 'string', ''));
         $form->addParam('start', rex_request('start', 'int', 0));
 
         $field = $form->addTextField('name');

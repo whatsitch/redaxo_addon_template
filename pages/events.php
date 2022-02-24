@@ -4,7 +4,8 @@ $addon = Addon::getInstance();
 $eventTable = new EventTable('events', 'Events');
 
 $eventTable->setTable('events');
-
+$eventTable->setListName('EventsList');
+$eventTable->setRowsPerPage(3);
 $eventTable->setSqlSelect("SELECT * FROM " . $eventTable->getTable() . ' ORDER BY `name` ASC');
 
 
@@ -14,7 +15,7 @@ $eventTable->getRequest();
 /*----- set entity id for pagination -----*/
 $eventTable->setStartPosition();
 
-
+/*----- actions -----*/
 if ($eventTable->isAction()) {
 
     switch ($eventTable->getAction()) {
@@ -34,7 +35,7 @@ if ($eventTable->isAction()) {
 
 }
 
-$eventTable->setList('EventsList');
+$eventTable->setList();
 
 /*----- UI -----*/
 $eventTable->addHoverEffect();

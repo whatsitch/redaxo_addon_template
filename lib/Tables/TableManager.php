@@ -1,4 +1,5 @@
 <?php
+
 enum ActionType: string
 {
     case TOGGLESTATUS = "togglestatus";
@@ -18,6 +19,7 @@ class TableManager
     protected string $action;
     protected int $entityId;
     protected int $oldStatus;
+    protected int $rowsPerPage;
     protected Addon $addon;
 
     public rex_list $list;
@@ -40,24 +42,35 @@ class TableManager
         return $this->table;
     }
 
+    public function setRowsPerPage(int $rows = 30) {
+        $this->rowsPerPage = $rows;
+    }
+
     public function setSqlSelect(string $sql)
     {
         $this->sqlSelect = $sql;
     }
 
-    public function setList(string $name)
+    public function setListName(string $name)
     {
-        $this->list = rex_list::Factory($this->sqlSelect, 30, $name, false);
         $this->listName = $name;
+    }
+
+    public function setList()
+    {
+        $this->list = rex_list::Factory($this->sqlSelect, $this->rowsPerPage, $this->listName, true);
     }
 
     public function setStartPosition()
     {
         $this->startPosition = rex_request('start', 'int', -1);
         if ($this->startPosition == -1) {
-            $this->startPosition = rex_request($this->listName, 'int', 0);
+            $this->startPosition = rex_request($this->listName . '_start', 'int', 0);
         }
         $this->addon->rex_addon->setProperty('list_start', $this->startPosition);
+
+        var_dump($this->startPosition);
+
     }
 
     public function getRequest()
@@ -72,6 +85,7 @@ class TableManager
     {
         return $this->action;
     }
+
     public function isAction(): bool
     {
         return ActionType::tryFrom($this->action) != NULL;
@@ -80,22 +94,23 @@ class TableManager
     public function addCreateEditColumn()
     {
 
-        $createIcon = '<a href="' . $this->list->getUrl(['func' => 'add']) . '"' . rex::getAccesskey('title1?', 'add') . ' title="title2? "><i class="rex-icon rex-icon-add"></i></a>';
+        $createIcon = '<a href="' . $this->list->getUrl(['func' => ActionType::ADD->value]) . '"' . rex::getAccesskey('add', ActionType::ADD->value) . ListManager::$rexIconAdd . '</a>';
 
         $this->list->addColumn($createIcon, ListManager::$modifyIcon, 0, [ListManager::$rexTableIcon, ListManager::$rexTableIcon]);
-        $this->list->setColumnParams($createIcon, ['func' => 'edit', 'id' => '###id###', 'start' => $this->startPosition]);
+
+        $this->list->setColumnParams($createIcon, ['func' => ActionType::EDIT->value, 'id' => ListManager::$idPlaceholder, 'start' => $this->startPosition]);
     }
 
     public function addActionColumn()
     {
-        $this->list->addColumn('func', '', -1, ['<th>###VALUE###</th>', '<td nowrap="nowrap">###VALUE###</td >']);
+        $this->list->addColumn('func', '', -1, ['<th>'. ListManager::$valuePlaceholder . '</th>', '<td nowrap="nowrap">'. ListManager::$valuePlaceholder . '</td >']);
         $addon = $this->addon;
         $this->list->setColumnFormat('func', 'custom', static function ($params) use ($addon) {
             $start = $addon->rex_addon->getProperty('list_start');
             $list = $params['list'];
-            $list->setColumnParams('delete', ['func' => 'delete', 'id' => '###id###', 'start' => $start]);
-            $list->addLinkAttribute('delete', 'data-confirm', '[###name### ###description###] - bestätigen');
-            return $list->getColumnLink('delete', ListManager::$rexIconDelete . 'löschen');
+            $list->setColumnParams('delete', ['func' => ActionType::DELETE->value, 'id' => ListManager::$idPlaceholder, 'start' => $start]);
+            $list->addLinkAttribute('delete', 'data-confirm', '[###name### ###description###] - confirm');
+            return $list->getColumnLink('delete', ListManager::$rexIconDelete . 'delete');
         });
     }
 
@@ -114,10 +129,10 @@ class TableManager
         $sql->delete();
 
         if (!$sql->hasError()) {
-            echo rex_view::success("Erfolgreich gelöscht");
+            echo rex_view::success("deleted");
         } else {
-            echo rex_view::error("Fehler");
-            dump($sql->getError()); // Fehlerinformationen ausgeben
+            echo rex_view::error("error");
+            dump($sql->getError()); // display debug error message
         }
         $this->action = '';
     }
@@ -162,23 +177,3 @@ class TableManager
 
 
 }
-
-
-
-
-/*
-    /**
-     * Callbackfunktion vor dem speichern des Formulars
-     * hier kann der zu speichernde Inhalt noch beeinflusst werden.
-    public function preSave($fieldsetName, $fieldName, $fieldValue, rex_sql $saveSql)
-    {
-        switch ($fieldName) {
-            default:
-                return $fieldValue;
-                break;
-            case 'birthdate':
-                return date('Y-m-d', strtotime($fieldValue));
-                break;
-        }
-    }
-*/
