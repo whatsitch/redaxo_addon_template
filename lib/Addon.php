@@ -2,7 +2,7 @@
 
 class Addon
 {
-    private static $instance = null;
+    private static ?Addon $instance = null;
     private static string  $package_name = "redaxo_addon_template";
     public string $name = "Redaxo Addon Template";
     public Database $db;
@@ -14,7 +14,7 @@ class Addon
         $this->db = Database::getInstance();
     }
 
-    public static function getInstance()
+    public static function getInstance(): ?Addon
     {
         if (self::$instance == null) {
             self::$instance = new Addon();
@@ -22,7 +22,7 @@ class Addon
 
         return self::$instance;
     }
-    public static function getPackageName()
+    public static function getPackageName(): string
     {
         return self::$package_name;
     }

@@ -7,7 +7,7 @@ page:
   title: "Redaxo Addon Template" # navigation title
   icon: rex-icon fa-desktop
   perm: admin
-
+  pjax: true # Hier kann die Verwendung von PJAX für das eigene AddOn gesteuert werden
   block: block
 
   subpages:
@@ -18,6 +18,9 @@ page:
       subpages:
         readme: { title: "README", subPath: "README.md" }
         changelog: { title: "changelog", subPath: "CHANGELOG.md" } #
+    events:
+      title: "translate:Events"
+      icon: rex-icon fa-table
     config:
       title: "translate:Config"
       icon: rex-icon fa-wrench

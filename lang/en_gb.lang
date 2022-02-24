@@ -1,5 +1,9 @@
 navigation_block = Redaxo Addon Template Block
 title = Redaxo Addon Template Page Title
 
-redaxo-addon-template_Overview = Overview
-redaxo-addon-template_Config = Configuration
+redaxo_addon_template_Overview = Overview
+redaxo_addon_template_Config = Configuration
+
+# events
+
+redaxo_addon_template_Events = Events

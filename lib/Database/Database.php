@@ -2,8 +2,8 @@
 
 class Database
 {
-    private static $instance = null;
-    public bool $enableSeeder = false;
+    private static ?Database $instance = null;
+    private bool $isSeederEnabled = true;
     protected array $tables;
     private bool $enableAddonPrefix = true;
 
@@ -18,7 +18,7 @@ class Database
         $this->defineTables();
         $this->createTables();
         /*----- seeder -----*/
-        if ($this->enableSeeder) {
+        if ($this->isSeederEnabled) {
             $seeder = new Seeder();
             $seeder->populate();
         }
@@ -27,6 +27,11 @@ class Database
     public function down()
     {
         $this->dropTables();
+    }
+
+    public function enableSeeder(bool $active)
+    {
+        $this->isSeederEnabled = $active;
     }
 
     public function defineTables()

@@ -1,22 +1,166 @@
 <?php
-
-class TableManager extends rex_form
+enum ActionType: string
 {
-    private static $instance = null;
+    case TOGGLESTATUS = "togglestatus";
+    case ADD = "add";
+    case EDIT = "edit";
+    case DELETE = "delete";
+}
 
-    private function __construct()
+class TableManager
+{
+    private string $table;
+    private string $tableHeader;
+    private string $sqlSelect;
+
+    protected string $listName;
+    protected string $startPosition;
+    protected string $action;
+    protected int $entityId;
+    protected int $oldStatus;
+    protected Addon $addon;
+
+    public rex_list $list;
+
+    public function __construct($listName, $tableHeader)
     {
-        // $this->rex_addon = rex_addon::get($this->package_name);
+        $this->addon = Addon::getInstance();
+        $this->listName = $listName;
+        $this->tableHeader = $tableHeader;
     }
 
-    public static function getInstance(): ?TableManager
+
+    public function setTable(string $tableName)
     {
-        if (self::$instance == null) {
-            self::$instance = new TableManager();
+        $this->table = rex::getTable($this->addon::getPackageName() . '_' . $tableName);
+    }
+
+    public function getTable(): string
+    {
+        return $this->table;
+    }
+
+    public function setSqlSelect(string $sql)
+    {
+        $this->sqlSelect = $sql;
+    }
+
+    public function setList(string $name)
+    {
+        $this->list = rex_list::Factory($this->sqlSelect, 30, $name, false);
+        $this->listName = $name;
+    }
+
+    public function setStartPosition()
+    {
+        $this->startPosition = rex_request('start', 'int', -1);
+        if ($this->startPosition == -1) {
+            $this->startPosition = rex_request($this->listName, 'int', 0);
         }
-
-        return self::$instance;
+        $this->addon->rex_addon->setProperty('list_start', $this->startPosition);
     }
+
+    public function getRequest()
+    {
+        $this->setAction();
+        $this->setEntityId();
+        $this->setOldStatus();
+
+    }
+
+    public function getAction(): string
+    {
+        return $this->action;
+    }
+    public function isAction(): bool
+    {
+        return ActionType::tryFrom($this->action) != NULL;
+    }
+
+    public function addCreateEditColumn()
+    {
+
+        $createIcon = '<a href="' . $this->list->getUrl(['func' => 'add']) . '"' . rex::getAccesskey('title1?', 'add') . ' title="title2? "><i class="rex-icon rex-icon-add"></i></a>';
+
+        $this->list->addColumn($createIcon, ListManager::$modifyIcon, 0, [ListManager::$rexTableIcon, ListManager::$rexTableIcon]);
+        $this->list->setColumnParams($createIcon, ['func' => 'edit', 'id' => '###id###', 'start' => $this->startPosition]);
+    }
+
+    public function addActionColumn()
+    {
+        $this->list->addColumn('func', '', -1, ['<th>###VALUE###</th>', '<td nowrap="nowrap">###VALUE###</td >']);
+        $addon = $this->addon;
+        $this->list->setColumnFormat('func', 'custom', static function ($params) use ($addon) {
+            $start = $addon->rex_addon->getProperty('list_start');
+            $list = $params['list'];
+            $list->setColumnParams('delete', ['func' => 'delete', 'id' => '###id###', 'start' => $start]);
+            $list->addLinkAttribute('delete', 'data-confirm', '[###name### ###description###] - bestätigen');
+            return $list->getColumnLink('delete', ListManager::$rexIconDelete . 'löschen');
+        });
+    }
+
+    public function addHoverEffect()
+    {
+        $this->list->addTableAttribute('class', 'table-striped table-hover');
+    }
+
+    public function deleteEntity()
+    {
+        $sql = rex_sql::factory();
+        $sql->setDebug(false);
+
+        $sql->setTable($this->getTable());
+        $sql->setWhere(['id' => $this->entityId]);
+        $sql->delete();
+
+        if (!$sql->hasError()) {
+            echo rex_view::success("Erfolgreich gelöscht");
+        } else {
+            echo rex_view::error("Fehler");
+            dump($sql->getError()); // Fehlerinformationen ausgeben
+        }
+        $this->action = '';
+    }
+
+    public function addEntity()
+    {
+        throw new Error("method not implemented");
+    }
+
+    public function editEntity()
+    {
+        throw new Error("method not implemented");
+    }
+
+    public function show()
+    {
+        $fragment = new rex_fragment();
+        $fragment->setVar('title', $this->tableHeader);
+        $fragment->setVar('content', $this->list->get(), false);
+        echo $fragment->parse('core/page/section.php');
+    }
+
+    private function setAction()
+    {
+        $this->action = rex_request('func', 'string', '');
+    }
+
+    private function setEntityId()
+    {
+        $this->entityId = rex_request('id', 'int', -1);
+    }
+
+    private function setOldStatus()
+    {
+        $this->oldStatus = rex_request('oldstatus', 'int', -1);
+    }
+
+    protected function getOldStatus(): int
+    {
+        return $this->oldStatus;
+    }
+
+
 }
 
 

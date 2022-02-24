@@ -1,0 +1,6 @@
+
+c	php:S1192x"IDefine a constant instead of duplicating this literal "###id###" 4 times.(ÔÏ«Àøÿÿÿÿ
+z	php:S1488‚"_Immediately return this expression instead of assigning it to the temporary variable "$string".(ÒŠóÍşÿÿÿÿ
+8php:S125@"Remove this commented out code.(­Ä»ùÿÿÿÿ
+8php:S125Y"Remove this commented out code.(é§Õ”ûÿÿÿÿ
+8php:S125v"Remove this commented out code.(í¯ß‡ûÿÿÿÿ

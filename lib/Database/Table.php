@@ -4,6 +4,7 @@ class Table
 {
     public string $name;
     public array $columns;
+    private bool $enableAddonPrefix;
 
     public function __construct(string $tableName, bool $enableAddonPrefix, array $columns)
     {

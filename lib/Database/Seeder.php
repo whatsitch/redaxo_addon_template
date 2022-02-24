@@ -9,15 +9,18 @@ class Seeder
         $this->sql = rex_sql::factory();
     }
 
+    /**
+     * @throws rex_sql_exception
+     */
     public function populate()
     {
         /*----- events table -----*/
         $events = [
-            ['id' => 1, 'name' => 'event 01', 'description', 'event 01 description', 'isActive', 1],
-            ['id' => 2, 'name' => 'event 02', 'description', 'event 02 description', 'isActive', 1],
+            ['id' => 1, 'name' => 'event 01', 'description' => 'event 01 description', 'isActive' => 1],
+            ['id' => 2, 'name' => 'event 02', 'description' => 'event 02 description', 'isActive' => 1],
         ];
 
-        $this->sql->setTable(rex::getTable('events'));
+        $this->sql->setTable(rex::getTable(Addon::getPackageName() . '_' . 'events'));
 
         foreach ($events as $event) {
             $this->sql->addRecord(static function (rex_sql $record) use ($event) {
