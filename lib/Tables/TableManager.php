@@ -9,10 +9,10 @@ class TableManager extends rex_form
         // $this->rex_addon = rex_addon::get($this->package_name);
     }
 
-    public static function getInstance()
+    public static function getInstance(): ?TableManager
     {
         if (self::$instance == null) {
-            self::$instance = new Database();
+            self::$instance = new TableManager();
         }
 
         return self::$instance;
