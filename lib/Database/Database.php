@@ -34,7 +34,7 @@ class Database
         $this->isSeederEnabled = $active;
     }
 
-    public function defineTables()
+    private function defineTables()
     {
         $this->tables[0] = new Table("events", $this->enableAddonPrefix, [
             new rex_sql_column("name", "varchar(255)", true, 1,),
@@ -43,8 +43,7 @@ class Database
         ]);
     }
 
-
-    public function createTables()
+    private function createTables()
     {
         foreach ($this->tables as $table) {
 

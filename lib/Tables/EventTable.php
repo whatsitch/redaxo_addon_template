@@ -1,10 +1,27 @@
 <?php
-use JetBrains\PhpStorm\NoReturn;
 
+use JetBrains\PhpStorm\NoReturn;
 
 
 class EventTable extends TableManager
 {
+
+    public function setColumnLabels()
+    {
+        $this->list->setColumnLabel('id', "ID");
+        $this->list->setColumnLabel('name', "Name");
+        $this->list->setColumnLabel('description', "Description");
+        $this->list->setColumnLabel('isActive', "Status");
+        $this->list->setColumnLabel('func', "Action");
+    }
+
+    public function setColumnSortable()
+    {
+        $this->list->setColumnSortable('id', 'asc');
+        $this->list->setColumnSortable('name', 'asc');
+        $this->list->setColumnSortable('description', 'asc');
+        $this->list->setColumnSortable('isActive', 'asc');
+    }
 
     public function modifyIsActiveColumn()
     {
@@ -16,7 +33,7 @@ class EventTable extends TableManager
                 $string = $list->getColumnLink('isActive', '<span class="rex-online">' . ListManager::rexIconActive(true) . "active" . '</span>');
             } else {
                 $list->setColumnParams('isActive', ['func' => ActionType::TOGGLESTATUS->value, 'id' => ListManager::$idPlaceholder, 'oldstatus' => ListManager::$isActivePlaceholder, 'start' => $this->startPosition]);
-                $string = $list->getColumnLink('isActive', '<span class="rex-offline">' . ListManager::rexIconActive(false)  . "inactive" . '</span>');
+                $string = $list->getColumnLink('isActive', '<span class="rex-offline">' . ListManager::rexIconActive(false) . "inactive" . '</span>');
             }
             return $string;
         });
@@ -27,7 +44,6 @@ class EventTable extends TableManager
         $sql = rex_sql::factory();
         $sql->setDebug(false);
 
-
         $status = ($this->getOldStatus() === 1) ? 0 : 1;
 
         $sql->setTable($this->getTable());
@@ -37,43 +53,45 @@ class EventTable extends TableManager
 
         $this->action = '';
     }
+
     #[NoReturn] public function editEntity()
     {
         $this->setForm("Edit");
-        exit;
     }
 
     #[NoReturn] public function addEntity()
     {
         $this->setForm("Add");
-        exit;
     }
 
     private function setForm(string $title)
     {
-        $form = form::factory($this->getTable(), "Dataset", 'id=' . rex_request('id', 'int', 0), 'post', false);
+        $form = form::factory($this->getTable(), "Dataset", 'id=' . $this->entityId, 'post', false);
 
+        /*----- form params -----*/
         $form->addParam('id', $this->entityId);
+        $form->addParam('sort', $this->sort);
+        $form->addParam('sorttype', $this->sortType);
+        $form->addParam('start', $this->startPosition);
 
-        $form->addParam('sort', rex_request('sort', 'string', ''));
-        $form->addParam('sorttype', rex_request('sorttype', 'string', ''));
-        $form->addParam('start', rex_request('start', 'int', 0));
-
+        /*----- name field -----*/
         $field = $form->addTextField('name');
         $field->setLabel("label");
         $field->getValidator()->add('notEmpty', 'This is a required field');
 
+        /*----- description field -----*/
         $field = $form->addTextField('description');
         $field->setLabel("description");
 
+        /*----- status field -----*/
         $field = $form->addSelectField('isActive', $value = null, ['class' => 'form-control selectpicker']);
         $field->setLabel('Status');
         $select = $field->getSelect();
         $select->addOption('active', 1);
         $select->addOption('inactive', 0);
 
+        /*----- output -----*/
         $content = $form->get();
-
         $fragment = new rex_fragment();
         $fragment->setVar('class', 'edit', false);
         $fragment->setVar('title', $title);
@@ -81,9 +99,7 @@ class EventTable extends TableManager
         $content = $fragment->parse('core/page/section.php');
 
         echo $content;
-
     }
-
 
 
 }

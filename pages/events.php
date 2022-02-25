@@ -1,15 +1,16 @@
 <?php
-$addon = Addon::getInstance();
 
 $eventTable = new EventTable('events', 'Events');
 
 $eventTable->setTable('events');
+
 $eventTable->setListName('EventsList');
+
 $eventTable->setRowsPerPage(3);
+
 $eventTable->setSqlSelect("SELECT * FROM " . $eventTable->getTable() . ' ORDER BY `name` ASC');
 
-
-/*----- action -----*/
+/*----- get request data -----*/
 $eventTable->getRequest();
 
 /*----- set entity id for pagination -----*/
@@ -17,7 +18,6 @@ $eventTable->setStartPosition();
 
 /*----- actions -----*/
 if ($eventTable->isAction()) {
-
     switch ($eventTable->getAction()) {
         case ActionType::TOGGLESTATUS->value:
             $eventTable->updateStatus();
@@ -27,25 +27,20 @@ if ($eventTable->isAction()) {
             break;
         case ActionType::ADD->value:
             $eventTable->addEntity();
+            exit;
         case ActionType::EDIT->value:
             $eventTable->editEntity();
+            exit;
         default:
             break;
     }
-
 }
 
+/*----- create new rex_list instance -----*/
 $eventTable->setList();
 
-/*----- UI -----*/
+/*----- UI options -----*/
 $eventTable->addHoverEffect();
-
-
-/*----- column sortable -----*/
-$eventTable->list->setColumnSortable('id', 'asc');
-$eventTable->list->setColumnSortable('name', 'asc');
-$eventTable->list->setColumnSortable('description', 'asc');
-$eventTable->list->setColumnSortable('isActive', 'asc');
 
 /*----- add create, edit column -----*/
 $eventTable->addCreateEditColumn();
@@ -57,12 +52,10 @@ $eventTable->addActionColumn();
 $eventTable->modifyIsActiveColumn();
 
 /*----- set  column labels -----*/
-$eventTable->list->setColumnLabel('id', "ID");
-$eventTable->list->setColumnLabel('name', "Name");
-$eventTable->list->setColumnLabel('description', "Description");
-$eventTable->list->setColumnLabel('isActive', "Status");
-$eventTable->list->setColumnLabel('func', "Action");
+$eventTable->setColumnLabels();
 
+/*----- column sortable -----*/
+$eventTable->setColumnSortable();
 
 /*----- output -----*/
 

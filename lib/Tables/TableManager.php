@@ -6,12 +6,14 @@ class TableManager
     private string $tableHeader;
     private string $sqlSelect;
 
-    protected string $listName;
     protected string $startPosition;
+    protected string $listName;
+    protected int $rowsPerPage;
+    protected string $sortType;
+    protected string $sort;
+    protected int $oldStatus;
     protected string $action;
     protected int $entityId;
-    protected int $oldStatus;
-    protected int $rowsPerPage;
     protected Addon $addon;
 
     public rex_list $list;
@@ -34,7 +36,8 @@ class TableManager
         return $this->table;
     }
 
-    public function setRowsPerPage(int $rows = 30) {
+    public function setRowsPerPage(int $rows = 30)
+    {
         $this->rowsPerPage = $rows;
     }
 
@@ -55,13 +58,11 @@ class TableManager
 
     public function setStartPosition()
     {
+        // parameter is either 'start' or 'ListName_start';
         $this->startPosition = rex_request('start', 'int', -1);
         if ($this->startPosition == -1) {
             $this->startPosition = rex_request($this->listName . '_start', 'int', 0);
         }
-       // $this->addon->rex_addon->setProperty('list_start', $this->startPosition);
-
-
     }
 
     public function getRequest()
@@ -69,6 +70,7 @@ class TableManager
         $this->setAction();
         $this->setEntityId();
         $this->setOldStatus();
+        $this->setSort();
     }
 
     public function getAction(): string
@@ -83,7 +85,6 @@ class TableManager
 
     public function addCreateEditColumn()
     {
-
         $createIcon = '<a href="' . $this->list->getUrl(['func' => ActionType::ADD->value]) . '"' . rex::getAccesskey('add', ActionType::ADD->value) . ListManager::$rexIconAdd . '</a>';
 
         $this->list->addColumn($createIcon, ListManager::$modifyIcon, 0, [ListManager::$rexTableIcon, ListManager::$rexTableIcon]);
@@ -93,14 +94,13 @@ class TableManager
 
     public function addActionColumn()
     {
-        $this->list->addColumn('func', '', -1, ['<th>'. ListManager::$valuePlaceholder . '</th>', '<td nowrap="nowrap">'. ListManager::$valuePlaceholder . '</td >']);
+        $this->list->addColumn('func', '', -1, ['<th>' . ListManager::$valuePlaceholder . '</th>', '<td nowrap="nowrap">' . ListManager::$valuePlaceholder . '</td >']);
 
-        $this->list->setColumnFormat('func', 'custom', function ($params)  {
-           // $start = $addon->rex_addon->getProperty('list_start');
-            $list = $params['list'];
-            $list->setColumnParams('delete', ['func' => ActionType::DELETE->value, 'id' => ListManager::$idPlaceholder, 'start' => $this->startPosition]);
-            $list->addLinkAttribute('delete', 'data-confirm', '[###name### ###description###] - confirm');
-            return $list->getColumnLink('delete', ListManager::$rexIconDelete . 'delete');
+
+        $this->list->setColumnFormat('func', 'custom', function () {
+            $this->list->setColumnParams('delete', ['func' => ActionType::DELETE->value, 'id' => ListManager::$idPlaceholder, 'start' => $this->startPosition]);
+            $this->list->addLinkAttribute('delete', 'data-confirm', '[###name### ###description###] - confirm');
+            return $this->list->getColumnLink('delete', ListManager::$rexIconDelete . 'delete');
         });
     }
 
@@ -127,6 +127,14 @@ class TableManager
         $this->action = '';
     }
 
+    public function show()
+    {
+        $fragment = new rex_fragment();
+        $fragment->setVar('title', $this->tableHeader);
+        $fragment->setVar('content', $this->list->get(), false);
+        echo $fragment->parse('core/page/section.php');
+    }
+
     public function addEntity()
     {
         throw new Error("method not implemented");
@@ -137,12 +145,14 @@ class TableManager
         throw new Error("method not implemented");
     }
 
-    public function show()
+    public function setColumnSortable()
     {
-        $fragment = new rex_fragment();
-        $fragment->setVar('title', $this->tableHeader);
-        $fragment->setVar('content', $this->list->get(), false);
-        echo $fragment->parse('core/page/section.php');
+        throw new Error("method not implemented");
+    }
+
+    public function setColumnLabels()
+    {
+        throw new Error("method not implemented");
     }
 
     private function setAction()
@@ -153,6 +163,12 @@ class TableManager
     private function setEntityId()
     {
         $this->entityId = rex_request('id', 'int', -1);
+    }
+
+    private function setSort()
+    {
+        $this->sort = rex_request('sort', 'string', '');
+        $this->sortType = rex_request('sorttype', 'string', '');
     }
 
     private function setOldStatus()
