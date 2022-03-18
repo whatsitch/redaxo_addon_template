@@ -1,12 +1,12 @@
 <?php
 
-$eventTable = new EventTable('events', 'Events');
+$eventTable = new EventTable();
 
-$eventTable->setTable('events');
+$eventTable->setTable('events', 'Events');
 
 $eventTable->setListName('EventsList');
 
-$eventTable->setRowsPerPage(3);
+$eventTable->setRowsPerPage(15);
 
 $eventTable->setSqlSelect("SELECT * FROM " . $eventTable->getTable() . ' ORDER BY `name` ASC');
 
@@ -51,15 +51,13 @@ $eventTable->addActionColumn();
 /*----- modify isActive column -----*/
 $eventTable->modifyIsActiveColumn();
 
-/*----- set  column labels -----*/
+/*----- set column labels -----*/
 $eventTable->setColumnLabels();
 
 /*----- column sortable -----*/
 $eventTable->setColumnSortable();
 
 /*----- output -----*/
-
 // no rows message
 $eventTable->list->setNoRowsMessage("no rows");
-
-$eventTable->show();
+$eventTable->showList();

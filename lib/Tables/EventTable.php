@@ -2,15 +2,22 @@
 
 use JetBrains\PhpStorm\NoReturn;
 
-
 class EventTable extends TableManager
 {
+
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
     public function setColumnLabels()
     {
         $this->list->setColumnLabel('id', "ID");
         $this->list->setColumnLabel('name', "Name");
         $this->list->setColumnLabel('description', "Description");
+        $this->list->setColumnLabel('location', "Location");
+        $this->list->setColumnLabel('image', "Image");
+        $this->list->setColumnLabel('date', "Date");
         $this->list->setColumnLabel('isActive', "Status");
         $this->list->setColumnLabel('func', "Action");
     }
@@ -20,6 +27,9 @@ class EventTable extends TableManager
         $this->list->setColumnSortable('id', 'asc');
         $this->list->setColumnSortable('name', 'asc');
         $this->list->setColumnSortable('description', 'asc');
+        $this->list->setColumnSortable('location', 'asc');
+        $this->list->setColumnSortable('type', 'asc');
+        $this->list->setColumnSortable('date', 'asc');
         $this->list->setColumnSortable('isActive', 'asc');
     }
 
@@ -66,7 +76,7 @@ class EventTable extends TableManager
 
     private function setForm(string $title)
     {
-        $form = form::factory($this->getTable(), "Dataset", 'id=' . $this->entityId, 'post', false);
+        $form = Form::factory($this->getTable(), "Dataset", 'id=' . $this->entityId, 'post', false);
 
         /*----- form params -----*/
         $form->addParam('id', $this->entityId);
@@ -76,15 +86,34 @@ class EventTable extends TableManager
 
         /*----- name field -----*/
         $field = $form->addTextField('name');
-        $field->setLabel("label");
+        $field->setLabel("Name");
         $field->getValidator()->add('notEmpty', 'This is a required field');
 
         /*----- description field -----*/
         $field = $form->addTextField('description');
-        $field->setLabel("description");
+        $field->setLabel("Description");
+
+        /*----- location field -----*/
+        $field = $form->addTextField('location');
+        $field->setLabel("Location");
+
+        /*----- image field -----*/
+        $field = $form->addMediaField('image');
+        $field->setLabel("Image");
+        $field->setPreview(1);
+        $field->setTypes('jpg,png');
+
+
+        /*----- date field -----*/
+        $field = $form->addInputField('date', 'date', null, ['class' => 'form-control']);
+        $field->setLabel('Date');
+        // MySQL date = YYYY-MM-DD display date = TT.MM.YYYY
+        /*if ($field->getValue()) {
+            $field->setValue(date('d.m.Y', strtotime($field->getValue())));
+        }*/
 
         /*----- status field -----*/
-        $field = $form->addSelectField('isActive', $value = null, ['class' => 'form-control selectpicker']);
+        $field = $form->addSelectField('isActive', null, ['class' => 'form-control selectpicker']);
         $field->setLabel('Status');
         $select = $field->getSelect();
         $select->addOption('active', 1);

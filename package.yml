@@ -1,5 +1,5 @@
 package: redaxo_addon_template
-version: "1.0.0"
+version: "1.1.1"
 author: whatsitch
 supportpage: https://github.com/whatsitch/redaxo-addon-template/
 
@@ -9,7 +9,6 @@ page:
   perm: admin
   pjax: true # Hier kann die Verwendung von PJAX für das eigene AddOn gesteuert werden
   block: block
-
   subpages:
     overview:
       title: "translate:Overview"

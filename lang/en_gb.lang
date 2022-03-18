@@ -1,9 +1,10 @@
+#block translation
 navigation_block = Redaxo Addon Template Block
+
+#general translation
 title = Redaxo Addon Template Page Title
 
+# tab navigation translation
 redaxo_addon_template_Overview = Overview
-redaxo_addon_template_Config = Configuration
-
-# events
-
 redaxo_addon_template_Events = Events
+redaxo_addon_template_Config = Configuration

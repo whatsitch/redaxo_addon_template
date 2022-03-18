@@ -1,6 +1,6 @@
 <?php
 
-class form extends rex_form
+class Form extends rex_form
 {
     /**
      * callback function before form save

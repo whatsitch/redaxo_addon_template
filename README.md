@@ -2,13 +2,24 @@
 
 ## Overview
 
+This is a simple and easy to extend starter addon with table CRUD functionalities
+
 ### Installation
 
-#### Changes
+#### customizations
 
-- package.yml -> change package name
-- install.php -> change addon name
-- Addon.php -> Addon class change properties
-- lang files -> change package name prefix
-- Database.php -> modify tables and columns
-- TableManager.php -> modify addActionColumn() - addLinkAttribute
+- package.yml 
+  - change package name
+  - change page specific settings
+- Addon 
+  - change package and display name
+  - enable / disable seeder
+- .lang files
+  - change package name prefix
+- Database
+  - modify tables and columns
+- TableManager
+  - modify method addActionColumn() - addLinkAttribute (delete confirmation)
+- ListManager
+  - change database column placeholders as needed
+

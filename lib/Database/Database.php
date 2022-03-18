@@ -39,6 +39,9 @@ class Database
         $this->tables[0] = new Table("events", $this->enableAddonPrefix, [
             new rex_sql_column("name", "varchar(255)", true, 1,),
             new rex_sql_column("description", "varchar(255)", true, 1),
+            new rex_sql_column("location", "varchar(255)", true, ''),
+            new rex_sql_column("image", "varchar(255)", true, ''),
+            new rex_sql_column('date', 'date', true),
             new rex_sql_column("isActive", "tinyint(1)", true, 1)
         ]);
     }

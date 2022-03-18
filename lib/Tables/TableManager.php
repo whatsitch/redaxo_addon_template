@@ -18,17 +18,21 @@ class TableManager
 
     public rex_list $list;
 
-    public function __construct($listName, $tableHeader)
+    public function __construct()
     {
         $this->addon = Addon::getInstance();
-        $this->listName = $listName;
-        $this->tableHeader = $tableHeader;
     }
 
-
-    public function setTable(string $tableName)
+    /**
+     *
+     * @param string $tableName sql table name without package name
+     * @param string $tableHeader UI table header name
+     * @return void
+     */
+    public function setTable(string $tableName, string $tableHeader): void
     {
         $this->table = rex::getTable($this->addon::getPackageName() . '_' . $tableName);
+        $this->tableHeader = $tableHeader;
     }
 
     public function getTable(): string
@@ -36,27 +40,27 @@ class TableManager
         return $this->table;
     }
 
-    public function setRowsPerPage(int $rows = 30)
+    public function setRowsPerPage(int $rows = 30): void
     {
         $this->rowsPerPage = $rows;
     }
 
-    public function setSqlSelect(string $sql)
+    public function setSqlSelect(string $sql): void
     {
         $this->sqlSelect = $sql;
     }
 
-    public function setListName(string $name)
+    public function setListName(string $name): void
     {
         $this->listName = $name;
     }
 
-    public function setList()
+    public function setList(): void
     {
         $this->list = rex_list::Factory($this->sqlSelect, $this->rowsPerPage, $this->listName, false);
     }
 
-    public function setStartPosition()
+    public function setStartPosition(): void
     {
         // parameter is either 'start' or 'ListName_start';
         $this->startPosition = rex_request('start', 'int', -1);
@@ -65,7 +69,7 @@ class TableManager
         }
     }
 
-    public function getRequest()
+    public function getRequest(): void
     {
         $this->setAction();
         $this->setEntityId();
@@ -83,33 +87,32 @@ class TableManager
         return ActionType::tryFrom($this->action) != NULL;
     }
 
-    public function addCreateEditColumn()
+    public function addCreateEditColumn(): void
     {
         $createIcon = '<a href="' . $this->list->getUrl(['func' => ActionType::ADD->value]) . '"' . rex::getAccesskey('add', ActionType::ADD->value) . ListManager::$rexIconAdd . '</a>';
 
-        $this->list->addColumn($createIcon, ListManager::$modifyIcon, 0, [ListManager::$rexTableIcon, ListManager::$rexTableIcon]);
+        $this->list->addColumn($createIcon, ListManager::$rexIconEdit, 0, [ListManager::$rexTableIcon, ListManager::$rexTableIcon]);
 
         $this->list->setColumnParams($createIcon, ['func' => ActionType::EDIT->value, 'id' => ListManager::$idPlaceholder, 'start' => $this->startPosition]);
     }
 
-    public function addActionColumn()
+    public function addActionColumn(): void
     {
         $this->list->addColumn('func', '', -1, ['<th>' . ListManager::$valuePlaceholder . '</th>', '<td nowrap="nowrap">' . ListManager::$valuePlaceholder . '</td >']);
 
-
         $this->list->setColumnFormat('func', 'custom', function () {
             $this->list->setColumnParams('delete', ['func' => ActionType::DELETE->value, 'id' => ListManager::$idPlaceholder, 'start' => $this->startPosition]);
-            $this->list->addLinkAttribute('delete', 'data-confirm', '[###name### ###description###] - confirm');
+            $this->list->addLinkAttribute('delete', 'data-confirm', '['.ListManager::$namePlaceholder .' ' . ListManager::$descriptionPlaceholder. '] - confirm');
             return $this->list->getColumnLink('delete', ListManager::$rexIconDelete . 'delete');
         });
     }
 
-    public function addHoverEffect()
+    public function addHoverEffect(): void
     {
         $this->list->addTableAttribute('class', 'table-striped table-hover');
     }
 
-    public function deleteEntity()
+    public function deleteEntity(): void
     {
         $sql = rex_sql::factory();
         $sql->setDebug(false);
@@ -127,7 +130,7 @@ class TableManager
         $this->action = '';
     }
 
-    public function show()
+    public function showList()
     {
         $fragment = new rex_fragment();
         $fragment->setVar('title', $this->tableHeader);
@@ -155,23 +158,23 @@ class TableManager
         throw new Error("method not implemented");
     }
 
-    private function setAction()
+    private function setAction(): void
     {
         $this->action = rex_request('func', 'string', '');
     }
 
-    private function setEntityId()
+    private function setEntityId(): void
     {
         $this->entityId = rex_request('id', 'int', -1);
     }
 
-    private function setSort()
+    private function setSort(): void
     {
         $this->sort = rex_request('sort', 'string', '');
         $this->sortType = rex_request('sorttype', 'string', '');
     }
 
-    private function setOldStatus()
+    private function setOldStatus(): void
     {
         $this->oldStatus = rex_request('oldstatus', 'int', -1);
     }
